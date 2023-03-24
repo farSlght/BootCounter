@@ -14,20 +14,28 @@ import com.example.bootcounter.MainActivity
 import com.example.bootcounter.R
 import com.example.bootcounter.domain.data.model.BootTimeModel
 
-fun Service.publishNotification(bootTimeModel: BootTimeModel) {
+fun Service.publishNotification(bootTimeModel: BootTimeModel?) {
 
     Log.d("PublishNotification", bootTimeModel.toString())
 
     val mBuilder = NotificationCompat.Builder(this.applicationContext, "boot_count_notify")
     val intent = Intent(this.applicationContext, MainActivity::class.java)
-    val pendingIntent = PendingIntent.getActivity(this, 0, intent, 0)
+    val pendingIntent = PendingIntent.getActivity(
+        this,
+        0,
+        intent,
+        PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+    )
 
-    val notificationLayout = RemoteViews(packageName, R.layout.notification)
-    notificationLayout.setTextViewText(R.id.title_text, bootTimeModel.orderNumber.toString())
-    notificationLayout.setTextViewText(R.id.price_text, bootTimeModel.timestamp.toString())
+    if (bootTimeModel != null) {
+        mBuilder.setContentTitle(getString(R.string.app_name))
+        mBuilder.setContentText(bootTimeModel.timestamp.toString())
+    } else {
+        mBuilder.setContentTitle(getString(R.string.no_boots_detected))
+    }
 
     mBuilder.setContentIntent(pendingIntent)
-    mBuilder.setCustomContentView(notificationLayout)
+    mBuilder.setSmallIcon(android.R.drawable.ic_dialog_alert)
     mBuilder.setDefaults(NotificationCompat.DEFAULT_VIBRATE or NotificationCompat.DEFAULT_SOUND)
     mBuilder.setPriority(NotificationCompat.PRIORITY_MAX)
 

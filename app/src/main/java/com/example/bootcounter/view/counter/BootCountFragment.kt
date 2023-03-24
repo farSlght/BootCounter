@@ -1,10 +1,13 @@
 package com.example.bootcounter.view.counter
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.example.bootcounter.R
@@ -17,8 +20,7 @@ import com.example.bootcounter.viewModel.CounterViewModel
  */
 class BootCountFragment : Fragment() {
 
-    private val storage = BootTimeStorage
-    private lateinit var viewModel: CounterViewModel
+    private val viewModel: CounterViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,15 +31,28 @@ class BootCountFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProviders.of(requireActivity()).get(CounterViewModel::class.java)
 
-        //todo: add ListItemadapter
+        viewModel.updateBootTimes()
 
-        viewModel.bootTimeModelLiveData.observe(viewLifecycleOwner,
-            Observer {
-                //todo: update UI
+        val bootTimesList = view.findViewById<android.widget.ListView>(R.id.boot_times_list)
+        
+        viewModel.bootTimeModelLiveData.observe(viewLifecycleOwner
+        ) {
+            val bootTimeStrings = it.map { bootTimeModel -> bootTimeModel.toString() }
+            if (bootTimeStrings.isNotEmpty()) {
+                bootTimesList.adapter = ArrayAdapter<String>(
+                    requireContext(),
+                    android.R.layout.simple_list_item_1,
+                    bootTimeStrings
+                )
+            } else {
+                bootTimesList.adapter = ArrayAdapter<String>(
+                    requireContext(),
+                    android.R.layout.simple_list_item_1,
+                    listOf(getString(R.string.no_boots_detected))
+                )
             }
-        )
+        }
     }
 
 }

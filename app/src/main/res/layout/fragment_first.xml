@@ -8,23 +8,15 @@
     tools:context=".view.counter.BootCountFragment">
 
 <ListView
+    android:id="@+id/boot_times_list"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:listitem="@layout/boot_times_list_item">
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical"
+    android:gravity="center"
+    tools:listitem="@layout/boot_times_list_item"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintBottom_toBottomOf="parent">
 
 </ListView>
-
-    <TextView
-        android:id="@+id/no_boots"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/no_boots_detected"
-        android:textColor="@color/black"
-        android:textSize="22sp"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
